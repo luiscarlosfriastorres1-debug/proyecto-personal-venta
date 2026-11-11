@@ -160,7 +160,13 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);f
 
 <footer><div class="wrap">Invitaciones digitales personalizadas. Pago del 50 % para empezar y el resto al aprobar el diseño.</div></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// CONFIGURA estos datos desde tu proyecto Supabase.
+const SUPABASE_URL = "PEGA_AQUI_TU_PROJECT_URL";
+const SUPABASE_ANON_KEY = "PEGA_AQUI_TU_PUBLISHABLE_O_ANON_KEY";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // Cambia este número por el tuyo: código de país + número, sin + ni espacios (ej: 573001234567)
 const WA_NUMBER = "573000000000";
 
@@ -221,10 +227,21 @@ function validate(){
 }
 f.addEventListener('input',render);
 f.addEventListener('change',render);
-send.addEventListener('click',e=>{
-  if(!validate()){e.preventDefault();return;}
-  render();
-  done.textContent='Se abrió WhatsApp con tu pedido. Si no apareció, usa el botón "Copiar pedido" y pégalo en un chat conmigo.';
+send.addEventListener('click',async e=>{
+  e.preventDefault();
+  if(!validate())return;
+  if(SUPABASE_URL.includes('PEGA_AQUI') || SUPABASE_ANON_KEY.includes('PEGA_AQUI')){
+    done.textContent='Falta configurar la conexión con la base de datos. Revisa la guía incluida en el proyecto.';
+    done.classList.add('show'); return;
+  }
+  send.style.pointerEvents='none'; send.textContent='Registrando pedido...';
+  const order={id:crypto.randomUUID(),f:data(),status:'Nuevo',paid:false,notes:'',created:Date.now()};
+  const {error}=await db.from('pedidos').insert(order);
+  send.style.pointerEvents=''; send.textContent='Enviar pedido por WhatsApp';
+  if(error){console.error(error);done.textContent='No se pudo registrar el pedido. Inténtalo nuevamente o contáctanos.';done.classList.add('show');return;}
+  const url='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(message());
+  window.open(url,'_blank','noopener');
+  done.textContent='¡Pedido registrado correctamente! Se abrió WhatsApp para enviarlo.';
   done.classList.add('show');
 });
 document.getElementById('copy').addEventListener('click',async()=>{
