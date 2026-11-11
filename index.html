@@ -160,13 +160,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);f
 
 <footer><div class="wrap">Invitaciones digitales personalizadas. Pago del 50 % para empezar y el resto al aprobar el diseño.</div></footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// CONFIGURA estos datos desde tu proyecto Supabase.
-const SUPABASE_URL = "PEGA_AQUI_TU_PROJECT_URL";
-const SUPABASE_ANON_KEY = "PEGA_AQUI_TU_PUBLISHABLE_O_ANON_KEY";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 // Cambia este número por el tuyo: código de país + número, sin + ni espacios (ej: 573001234567)
 const WA_NUMBER = "573000000000";
 
@@ -227,21 +221,51 @@ function validate(){
 }
 f.addEventListener('input',render);
 f.addEventListener('change',render);
-send.addEventListener('click',async e=>{
-  e.preventDefault();
-  if(!validate())return;
-  if(SUPABASE_URL.includes('PEGA_AQUI') || SUPABASE_ANON_KEY.includes('PEGA_AQUI')){
-    done.textContent='Falta configurar la conexión con la base de datos. Revisa la guía incluida en el proyecto.';
-    done.classList.add('show'); return;
+// Guarda el pedido en el mismo almacenamiento local que utiliza admin.html.
+// Ambos archivos deben abrirse desde el mismo dominio/origen y navegador.
+const ORDERS_KEY = 'pedidos_v1';
+function saveOrderLocally(){
+  const fields = data().filter(([k,v])=>v);
+  const messageText = message().replace(/\\s+/g,' ').trim();
+  const sourceHash = messageText.toLowerCase();
+  let orders = [];
+  try { orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]'); } catch (err) { orders = []; }
+
+  // Evita registrar dos veces el mismo pedido si el cliente pulsa varias veces.
+  if (orders.some(o => o.sourceHash === sourceHash)) return 'duplicate';
+
+  let hash = 5381;
+  for (let i=0; i<sourceHash.length; i++) hash = ((hash << 5) + hash + sourceHash.charCodeAt(i)) | 0;
+  const id = 'web-' + (hash >>> 0).toString(36) + '-' + Date.now().toString(36);
+  orders.unshift({
+    id,
+    sourceHash,
+    f: fields,
+    status: 'Nuevo',
+    paid: false,
+    notes: '',
+    created: Date.now()
+  });
+  try {
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    return 'saved';
+  } catch (err) {
+    return 'error';
   }
-  send.style.pointerEvents='none'; send.textContent='Registrando pedido...';
-  const order={id:crypto.randomUUID(),f:data(),status:'Nuevo',paid:false,notes:'',created:Date.now()};
-  const {error}=await db.from('pedidos').insert(order);
-  send.style.pointerEvents=''; send.textContent='Enviar pedido por WhatsApp';
-  if(error){console.error(error);done.textContent='No se pudo registrar el pedido. Inténtalo nuevamente o contáctanos.';done.classList.add('show');return;}
-  const url='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(message());
-  window.open(url,'_blank','noopener');
-  done.textContent='¡Pedido registrado correctamente! Se abrió WhatsApp para enviarlo.';
+}
+
+send.addEventListener('click',e=>{
+  if(!validate()){e.preventDefault();return;}
+  render();
+  const result = saveOrderLocally();
+  if(result === 'saved'){
+    done.textContent='¡Pedido registrado! Ahora aparecerá en admin.html como «Nuevo». Se abrirá WhatsApp para que también envíes el mensaje.';
+  } else if(result === 'duplicate'){
+    done.textContent='Este pedido ya estaba registrado en este navegador. Se abrirá WhatsApp para que puedas enviarlo.';
+  } else {
+    e.preventDefault();
+    done.textContent='No se pudo guardar el pedido en este navegador. Revisa el almacenamiento del navegador e inténtalo de nuevo.';
+  }
   done.classList.add('show');
 });
 document.getElementById('copy').addEventListener('click',async()=>{

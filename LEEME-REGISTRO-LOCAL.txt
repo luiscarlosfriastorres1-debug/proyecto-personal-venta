@@ -1,0 +1,19 @@
+CAMBIO: REGISTRO AUTOMÁTICO DE PEDIDOS EN EL NAVEGADOR
+
+- El formulario index.html guarda automáticamente cada pedido en localStorage.
+- admin.html lee esos pedidos y los muestra con estado «Nuevo».
+- El panel se actualiza cuando otra pestaña del mismo navegador modifica los pedidos.
+- No se utiliza Supabase ni ningún servidor externo.
+
+IMPORTANTE:
+localStorage solo se comparte entre páginas del mismo navegador, dispositivo y origen.
+Por ejemplo, si index.html y admin.html están publicados bajo el mismo dominio, comparten
+los pedidos. Si abres uno con file:// y el otro desde un servidor/dominio, o los abres
+en dispositivos distintos, no compartirán los datos.
+
+Para probar localmente, sirve la carpeta desde un único servidor local (por ejemplo,
+la extensión Live Server de VS Code) y abre index.html y admin.html desde la misma
+dirección base.
+
+El registro ocurre al pulsar «Enviar pedido por WhatsApp», antes de abrir WhatsApp.
+WhatsApp todavía requiere que el cliente pulse Enviar dentro de la aplicación.
