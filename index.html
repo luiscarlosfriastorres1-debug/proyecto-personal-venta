@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pide tu invitación digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F6F4FA; --surface:#FFFFFF; --ink:#1D1A2F; --muted:#5E5A74; --line:#DAD5E8;
+  --brand:#4B35C8; --brand-ink:#FFFFFF; --pop:#FF6B57; --ok:#1F8A5B;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14121F; --surface:#1E1B2E; --ink:#F1EFFA; --muted:#A9A5C0; --line:#34304B;
+  --brand:#8E7CFF; --brand-ink:#14121F; --pop:#FF8A78; --ok:#4CC38A;}}
+:root[data-theme="dark"]{--bg:#14121F; --surface:#1E1B2E; --ink:#F1EFFA; --muted:#A9A5C0; --line:#34304B; --brand:#8E7CFF; --brand-ink:#14121F; --pop:#FF8A78; --ok:#4CC38A;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 Figtree,system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,system-ui,sans-serif;line-height:1.08;margin:0;letter-spacing:-.02em}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header.hero{padding:56px 0 36px}
+.hero h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800;max-width:14ch}
+.hero p{max-width:48ch;color:var(--muted);font-size:1.15rem;margin:18px 0 0}
+.steps{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;padding:0;list-style:none}
+.steps li{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:.95rem;font-weight:500}
+.layout{display:grid;grid-template-columns:1fr;gap:28px;padding-bottom:64px}
+@media(min-width:900px){.layout{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}.ticket{position:sticky;top:24px}}
+fieldset{border:0;margin:0 0 30px;padding:0}
+legend{font:700 1.35rem "Bricolage Grotesque",Figtree,sans-serif;margin-bottom:4px;padding:0}
+.hint{color:var(--muted);font-size:.95rem;margin:0 0 14px}
+.choices{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.choice{position:relative}
+.choice input{position:absolute;opacity:0;inset:0;cursor:pointer;width:100%;height:100%;margin:0}
+.choice span{display:block;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-weight:600;transition:border-color .15s,background .15s}
+.choice small{display:block;font-weight:400;color:var(--muted);font-size:.85rem;margin-top:2px}
+.choice input:checked+span{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 10%,var(--surface));box-shadow:inset 0 0 0 1px var(--brand)}
+.choice input:focus-visible+span{outline:3px solid var(--pop);outline-offset:2px}
+.field{margin-bottom:16px}
+label.l{display:block;font-weight:600;margin-bottom:6px;font-size:.98rem}
+input[type=text],input[type=tel],input[type=date],input[type=time],select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:11px 13px}
+textarea{min-height:100px;resize:vertical}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--pop);outline-offset:2px}
+.row{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:560px){.row{grid-template-columns:1fr 1fr}}
+.err{color:#C0392B;font-size:.9rem;margin-top:4px;min-height:1.2em}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .err{color:#FF8A78}}
+.ticket{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:24px;position:relative}
+.ticket h2{font-size:1.5rem;margin-bottom:4px}
+.ticket .sub{color:var(--muted);font-size:.92rem;margin:0 0 16px}
+.ticket dl{margin:0;border-top:2px dashed var(--line)}
+.ticket .it{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:.97rem}
+.ticket dt{color:var(--muted);flex:none}
+.ticket dd{margin:0;text-align:right;font-weight:600;overflow-wrap:anywhere}
+.ticket dd.empty{color:var(--muted);font-weight:400}
+.btn{display:block;width:100%;border:0;border-radius:12px;background:var(--brand);color:var(--brand-ink);font:700 1.05rem "Bricolage Grotesque",Figtree,sans-serif;padding:15px 18px;cursor:pointer;margin-top:18px;text-align:center;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line);margin-top:10px}
+.note{font-size:.88rem;color:var(--muted);margin:12px 0 0}
+.done{display:none;background:color-mix(in srgb,var(--ok) 12%,var(--surface));border:1.5px solid var(--ok);border-radius:12px;padding:14px 16px;margin-top:16px;font-size:.95rem}
+.done.show{display:block}
+footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:.92rem}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <h1>Cuéntame cómo quieres tu invitación</h1>
+  <p>Llena el formulario con los detalles de tu evento. Yo diseño tu invitación digital y te la envío lista para compartir por WhatsApp.</p>
+  <ul class="steps"><li>1. Llenas tu pedido</li><li>2. Lo envías por WhatsApp</li><li>3. Recibes tu invitación en 24 a 48 horas</li></ul>
+</div></header>
+
+<main class="wrap layout">
+<form id="f" novalidate>
+  <fieldset>
+    <legend>¿Qué tipo de evento es?</legend>
+    <p class="hint">Elige uno.</p>
+    <div class="choices" id="evento">
+      <label class="choice"><input type="radio" name="evento" value="Boda"><span>Boda</span></label>
+      <label class="choice"><input type="radio" name="evento" value="Quinceañera"><span>Quinceañera</span></label>
+      <label class="choice"><input type="radio" name="evento" value="Cumpleaños"><span>Cumpleaños</span></label>
+      <label class="choice"><input type="radio" name="evento" value="Baby shower"><span>Baby shower</span></label>
+      <label class="choice"><input type="radio" name="evento" value="Bautizo o comunión"><span>Bautizo o comunión</span></label>
+      <label class="choice"><input type="radio" name="evento" value="Graduación"><span>Graduación</span></label>
+      <label class="choice"><input type="radio" name="evento" value="Otro"><span>Otro</span></label>
+    </div>
+    <div class="err" id="e-evento"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Datos del evento</legend>
+    <div class="field"><label class="l" for="nombres">Nombres de los festejados</label><input type="text" id="nombres" name="nombres" placeholder="Ej: Ana y Carlos"><div class="err" id="e-nombres"></div></div>
+    <div class="row">
+      <div class="field"><label class="l" for="fecha">Fecha</label><input type="date" id="fecha" name="fecha"><div class="err" id="e-fecha"></div></div>
+      <div class="field"><label class="l" for="hora">Hora</label><input type="time" id="hora" name="hora"></div>
+    </div>
+    <div class="field"><label class="l" for="lugar">Lugar y dirección</label><input type="text" id="lugar" name="lugar" placeholder="Nombre del lugar, ciudad y dirección"></div>
+    <div class="field"><label class="l" for="vestimenta">Código de vestimenta (opcional)</label><input type="text" id="vestimenta" name="vestimenta" placeholder="Ej: formal, color blanco no permitido"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Paquete</legend>
+    <p class="hint">Te confirmo el precio por WhatsApp.</p>
+    <div class="choices" id="paquete">
+      <label class="choice"><input type="radio" name="paquete" value="Básico"><span>Básico<small>Datos, ubicación y botón de WhatsApp</small></span></label>
+      <label class="choice"><input type="radio" name="paquete" value="Estándar"><span>Estándar<small>Suma cuenta regresiva, galería, música y confirmación</small></span></label>
+      <label class="choice"><input type="radio" name="paquete" value="Premium"><span>Premium<small>Suma dominio propio y diseño a medida</small></span></label>
+    </div>
+    <div class="err" id="e-paquete"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Extras</legend>
+    <p class="hint">Marca todo lo que quieras incluir.</p>
+    <div class="choices" id="extras">
+      <label class="choice"><input type="checkbox" name="extras" value="Cuenta regresiva"><span>Cuenta regresiva</span></label>
+      <label class="choice"><input type="checkbox" name="extras" value="Galería de fotos"><span>Galería de fotos</span></label>
+      <label class="choice"><input type="checkbox" name="extras" value="Música de fondo"><span>Música de fondo</span></label>
+      <label class="choice"><input type="checkbox" name="extras" value="Confirmación por WhatsApp"><span>Confirmación de asistencia</span></label>
+      <label class="choice"><input type="checkbox" name="extras" value="Mapa de ubicación"><span>Mapa de ubicación</span></label>
+      <label class="choice"><input type="checkbox" name="extras" value="Mesa de regalos"><span>Mesa de regalos</span></label>
+      <label class="choice"><input type="checkbox" name="extras" value="Código QR"><span>Código QR para imprimir</span></label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Estilo</legend>
+    <div class="row">
+      <div class="field"><label class="l" for="colores">Colores que te gustan</label><input type="text" id="colores" name="colores" placeholder="Ej: verde salvia y dorado"></div>
+      <div class="field"><label class="l" for="estilo">Estilo</label>
+        <select id="estilo" name="estilo"><option value="">Elige uno</option><option>Elegante y clásico</option><option>Minimalista</option><option>Romántico</option><option>Divertido y colorido</option><option>Rústico o campestre</option><option>Temático</option></select></div>
+    </div>
+    <div class="field"><label class="l" for="ref">Enlace de referencia (opcional)</label><input type="text" id="ref" name="ref" placeholder="Una invitación o página que te guste"></div>
+    <div class="field"><label class="l" for="mensaje">Mensaje o frase para la invitación</label><textarea id="mensaje" name="mensaje" placeholder="Escribe aquí el texto que quieres que aparezca"></textarea></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Tus datos de contacto</legend>
+    <div class="row">
+      <div class="field"><label class="l" for="cliente">Tu nombre</label><input type="text" id="cliente" name="cliente" autocomplete="name"><div class="err" id="e-cliente"></div></div>
+      <div class="field"><label class="l" for="tel">Tu WhatsApp</label><input type="tel" id="tel" name="tel" autocomplete="tel" placeholder="Con código de país"><div class="err" id="e-tel"></div></div>
+    </div>
+    <div class="field"><label class="l" for="entrega">¿Para cuándo la necesitas?</label>
+      <select id="entrega" name="entrega"><option value="">Elige uno</option><option>Lo antes posible (24 a 48 horas)</option><option>En una semana</option><option>En dos semanas o más</option></select></div>
+  </fieldset>
+</form>
+
+<aside class="ticket" aria-live="polite">
+  <h2>Resumen de tu pedido</h2>
+  <p class="sub">Se actualiza mientras llenas el formulario.</p>
+  <dl id="sum"></dl>
+  <a class="btn" id="send" href="#" target="_blank" rel="noopener">Enviar pedido por WhatsApp</a>
+  <button class="btn alt" id="copy" type="button">Copiar pedido</button>
+  <div class="done" id="done" role="status"></div>
+  <p class="note">Al enviar, se abre WhatsApp con tu pedido ya escrito. Solo tienes que presionar enviar.</p>
+</aside>
+</main>
+
+<footer><div class="wrap">Invitaciones digitales personalizadas. Pago del 50 % para empezar y el resto al aprobar el diseño.</div></footer>
+
+<script>
+// Cambia este número por el tuyo: código de país + número, sin + ni espacios (ej: 573001234567)
+const WA_NUMBER = "573000000000";
+
+const f = document.getElementById('f');
+const sum = document.getElementById('sum');
+const send = document.getElementById('send');
+const done = document.getElementById('done');
+
+function val(n){const e=f.elements[n];return e&&e.value?e.value.trim():'';}
+function checked(n){const e=f.querySelector('input[name="'+n+'"]:checked');return e?e.value:'';}
+function extras(){return [...f.querySelectorAll('input[name="extras"]:checked')].map(i=>i.value);}
+function fmtDate(v){if(!v)return '';const [y,m,d]=v.split('-');return d+'/'+m+'/'+y;}
+
+function data(){
+  return [
+    ['Evento',checked('evento')],['Festejados',val('nombres')],
+    ['Fecha',fmtDate(val('fecha'))+(val('hora')?' a las '+val('hora'):'')],
+    ['Lugar',val('lugar')],['Vestimenta',val('vestimenta')],
+    ['Paquete',checked('paquete')],['Extras',extras().join(', ')],
+    ['Colores',val('colores')],['Estilo',val('estilo')],['Referencia',val('ref')],
+    ['Mensaje',val('mensaje')],['Entrega',val('entrega')],
+    ['Nombre',val('cliente')],['WhatsApp',val('tel')]
+  ];
+}
+function message(){
+  const lines=data().filter(r=>r[1]).map(r=>'*'+r[0]+':* '+r[1]);
+  return 'Hola, quiero pedir una invitación digital.\n\n'+lines.join('\n');
+}
+function render(){
+  const rows=data();
+  sum.innerHTML='';
+  rows.forEach(([k,v])=>{
+    const d=document.createElement('div');d.className='it';
+    const dt=document.createElement('dt');dt.textContent=k;
+    const dd=document.createElement('dd');
+    if(v){dd.textContent=v;}else{dd.textContent='Pendiente';dd.className='empty';}
+    d.append(dt,dd);sum.appendChild(d);
+  });
+  send.href='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(message());
+}
+function validate(){
+  const checks=[
+    ['evento',!!checked('evento'),'Elige el tipo de evento.'],
+    ['nombres',!!val('nombres'),'Escribe los nombres de los festejados.'],
+    ['fecha',!!val('fecha'),'Elige la fecha del evento.'],
+    ['paquete',!!checked('paquete'),'Elige un paquete.'],
+    ['cliente',!!val('cliente'),'Escribe tu nombre.'],
+    ['tel',val('tel').replace(/\D/g,'').length>=7,'Escribe un número de WhatsApp válido.']
+  ];
+  let first=null;
+  checks.forEach(([k,ok,msg])=>{
+    const el=document.getElementById('e-'+k);
+    if(el)el.textContent=ok?'':msg;
+    if(!ok&&!first)first=el;
+  });
+  if(first){first.scrollIntoView({block:'center'});return false;}
+  return true;
+}
+f.addEventListener('input',render);
+f.addEventListener('change',render);
+send.addEventListener('click',e=>{
+  if(!validate()){e.preventDefault();return;}
+  render();
+  done.textContent='Se abrió WhatsApp con tu pedido. Si no apareció, usa el botón "Copiar pedido" y pégalo en un chat conmigo.';
+  done.classList.add('show');
+});
+document.getElementById('copy').addEventListener('click',async()=>{
+  if(!validate())return;
+  const txt=message().replace(/\*/g,'');
+  try{await navigator.clipboard.writeText(txt);done.textContent='Pedido copiado. Pégalo en un chat de WhatsApp conmigo.';}
+  catch(err){done.textContent='No se pudo copiar automáticamente. Selecciona el resumen y cópialo a mano.';}
+  done.classList.add('show');
+});
+render();
+</script>
+</body>
+</html>

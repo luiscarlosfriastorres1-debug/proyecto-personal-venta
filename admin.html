@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel de pedidos</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F6F4FA;--surface:#fff;--ink:#1D1A2F;--muted:#5E5A74;--line:#DAD5E8;--brand:#4B35C8;--brand-ink:#fff;--pop:#FF6B57;--ok:#1F8A5B;--warn:#B7791F;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14121F;--surface:#1E1B2E;--ink:#F1EFFA;--muted:#A9A5C0;--line:#34304B;--brand:#8E7CFF;--brand-ink:#14121F;--pop:#FF8A78;--ok:#4CC38A;--warn:#E0B04F}}
+:root[data-theme="dark"]{--bg:#14121F;--surface:#1E1B2E;--ink:#F1EFFA;--muted:#A9A5C0;--line:#34304B;--brand:#8E7CFF;--brand-ink:#14121F;--pop:#FF8A78;--ok:#4CC38A;--warn:#E0B04F}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Figtree,system-ui,sans-serif}
+h1,h2{font-family:"Bricolage Grotesque",Figtree,sans-serif;margin:0;letter-spacing:-.02em;line-height:1.1}
+.wrap{max-width:1000px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:clamp(1.8rem,5vw,2.6rem);font-weight:800}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 24px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:110px}
+.stat b{display:block;font:800 1.6rem "Bricolage Grotesque",sans-serif}
+.stat span{color:var(--muted);font-size:.9rem}
+.box{background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:18px;margin-bottom:24px}
+.box h2{font-size:1.2rem;margin-bottom:6px}
+.hint{color:var(--muted);font-size:.92rem;margin:0 0 10px}
+textarea,input[type=search],select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+textarea{min-height:110px;resize:vertical}
+button{font:600 .95rem Figtree,sans-serif;border-radius:10px;padding:10px 16px;cursor:pointer;border:1.5px solid var(--line);background:transparent;color:var(--ink)}
+button.p{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);margin-top:10px}
+:focus-visible{outline:3px solid var(--pop);outline-offset:2px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.bar input{flex:1;min-width:180px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.list{display:grid;gap:14px}
+.card{background:var(--surface);border:1.5px solid var(--line);border-left-width:6px;border-radius:14px;padding:16px}
+.card.Nuevo{border-left-color:var(--pop)}.card.Proceso{border-left-color:var(--warn)}.card.Entregado{border-left-color:var(--ok)}
+.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.card h3{margin:0;font:800 1.2rem "Bricolage Grotesque",sans-serif}
+.due{font-weight:600;font-size:.92rem}
+.due.soon{color:var(--pop)}
+dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:12px 0}
+dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+.act{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.act select{width:auto}
+.act label{display:flex;gap:6px;align-items:center;font-size:.95rem}
+.act a{color:var(--brand);font-weight:600}
+.notes{margin-top:10px;min-height:60px}
+.empty,.msg{color:var(--muted);text-align:center;padding:30px 10px}
+.err{color:#C0392B;font-size:.92rem;margin-top:8px}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .err{color:#FF8A78}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Panel de pedidos</h1>
+<div class="stats" id="stats"></div>
+
+<section class="box">
+  <h2>Agregar un pedido</h2>
+  <p class="hint">Pega aquí el mensaje que te llegó por WhatsApp desde el formulario. Se organiza solo y queda guardado.</p>
+  <textarea id="paste" placeholder="Hola, quiero pedir una invitación digital.&#10;&#10;Evento: Boda&#10;Festejados: Ana y Carlos&#10;..."></textarea>
+  <button class="p" id="add" type="button">Guardar pedido</button>
+  <div class="err" id="perr" role="alert"></div>
+</section>
+
+<div class="bar">
+  <input type="search" id="q" placeholder="Buscar por nombre, evento o teléfono" aria-label="Buscar pedidos">
+  <div class="tabs" id="tabs">
+    <button type="button" data-f="todos" aria-pressed="true">Todos</button>
+    <button type="button" data-f="Nuevo" aria-pressed="false">Nuevos</button>
+    <button type="button" data-f="Proceso" aria-pressed="false">En proceso</button>
+    <button type="button" data-f="Entregado" aria-pressed="false">Entregados</button>
+  </div>
+</div>
+<div class="list" id="list"></div>
+<section class="box" style="margin-top:24px">
+  <h2>Copia de seguridad</h2>
+  <p class="hint">Tus pedidos se guardan solo en este navegador y en este dispositivo. Descarga una copia de vez en cuando, o impórtala para ver tus pedidos en otro equipo.</p>
+  <button type="button" id="exp">Descargar copia</button>
+  <label style="margin-left:8px"><input type="file" id="imp" accept="application/json" style="max-width:220px"></label>
+  <div class="hint" id="bmsg" role="status" style="margin-top:8px"></div>
+</section>
+</div>
+
+<script>
+const LABEL={Nuevo:'Nuevo',Proceso:'En proceso',Entregado:'Entregado'};
+const KEY='pedidos_v1';let orders=[], filter='todos';
+function load(){try{orders=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){orders=[];}orders.sort((a,b)=>b.created-a.created);}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(orders));return true;}catch(e){return false;}}
+const $=id=>document.getElementById(id);
+
+function parse(text){
+  const pairs=[];
+  text.split('\n').forEach(raw=>{
+    const line=raw.trim(); if(!line) return;
+    const m=line.match(/^\*?([A-Za-zÁÉÍÓÚáéíóúñÑ ]{2,20})\*?\s*:\s*\*?\s*(.+)$/);
+    if(m && !/^hola/i.test(line)){pairs.push([m[1].trim(),m[2].replace(/\*/g,'').trim()]);}
+    else if(pairs.length && !/^hola/i.test(line)){pairs[pairs.length-1][1]+='\n'+line;}
+  });
+  return pairs;
+}
+function get(o,k){const p=(o.f||[]).find(x=>x[0].toLowerCase()===k.toLowerCase());return p?p[1]:'';}
+function hash(s){let h=5381;for(let i=0;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))|0;}return 'o'+(h>>>0).toString(36);}
+function daysLeft(o){
+  const m=get(o,'Fecha').match(/(\d{2})\/(\d{2})\/(\d{4})/); if(!m) return null;
+  const d=new Date(+m[3],+m[2]-1,+m[1]); const t=new Date(); t.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+function dueText(n){if(n===null)return '';if(n<0)return 'Evento pasado';if(n===0)return 'El evento es hoy';if(n===1)return 'Falta 1 día';return 'Faltan '+n+' días';}
+
+async function add(){
+  const t=$('paste').value.trim(); $('perr').textContent='';
+  const f=parse(t);
+  if(f.length<3){$('perr').textContent='No pude leer el pedido. Pega el mensaje completo tal como llegó.';return;}
+  const id=hash(t.replace(/\s+/g,' '));
+  if(orders.some(o=>o.id===id)){$('perr').textContent='Este pedido ya estaba guardado.';return;}
+  orders.unshift({id,f,status:'Nuevo',paid:false,notes:'',created:Date.now()});
+  if(!save()){$('perr').textContent='No se pudo guardar en este navegador.';return;}
+  $('paste').value='';render();
+}
+function upd(id,patch,quiet){const o=orders.find(x=>x.id===id);if(o){Object.assign(o,patch);save();if(!quiet)render();}}
+
+function render(){
+  const c={Nuevo:0,Proceso:0,Entregado:0};orders.forEach(o=>c[o.status]=(c[o.status]||0)+1);
+  const pend=orders.filter(o=>!o.paid&&o.status!=='Entregado').length;
+  $('stats').innerHTML='';
+  [[orders.length,'Pedidos'],[c.Nuevo,'Nuevos'],[c.Proceso,'En proceso'],[c.Entregado,'Entregados'],[pend,'Sin anticipo']].forEach(([n,l])=>{
+    const d=document.createElement('div');d.className='stat';const b=document.createElement('b');b.textContent=n;const s=document.createElement('span');s.textContent=l;d.append(b,s);$('stats').appendChild(d);
+  });
+  const q=$('q').value.trim().toLowerCase();
+  const rows=orders.filter(o=>(filter==='todos'||o.status===filter)&&(!q||JSON.stringify(o.f).toLowerCase().includes(q)));
+  const L=$('list');L.innerHTML='';
+  if(!rows.length){const d=document.createElement('div');d.className='empty';d.textContent=orders.length?'No hay pedidos con ese filtro.':'Aún no hay pedidos. Pega el primero arriba.';L.appendChild(d);return;}
+  rows.forEach(o=>{
+    const card=document.createElement('article');card.className='card '+o.status;
+    const top=document.createElement('div');top.className='top';
+    const h=document.createElement('h3');h.textContent=(get(o,'Evento')||'Pedido')+' · '+(get(o,'Festejados')||'sin nombres');
+    const n=daysLeft(o);const due=document.createElement('span');due.className='due'+(n!==null&&n>=0&&n<=7?' soon':'');due.textContent=dueText(n);
+    top.append(h,due);card.appendChild(top);
+    const dl=document.createElement('dl');
+    (o.f||[]).forEach(([k,v])=>{const dt=document.createElement('dt');dt.textContent=k;const dd=document.createElement('dd');dd.textContent=v;dl.append(dt,dd);});
+    card.appendChild(dl);
+    const act=document.createElement('div');act.className='act';
+    const sel=document.createElement('select');sel.setAttribute('aria-label','Estado del pedido');
+    Object.entries(LABEL).forEach(([k,v])=>{const op=document.createElement('option');op.value=k;op.textContent=v;if(k===o.status)op.selected=true;sel.appendChild(op);});
+    sel.onchange=()=>upd(o.id,{status:sel.value});
+    const lab=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!o.paid;cb.onchange=()=>upd(o.id,{paid:cb.checked});lab.append(cb,document.createTextNode('Anticipo pagado'));
+    act.append(sel,lab);
+    const tel=get(o,'WhatsApp').replace(/\D/g,'');
+    if(tel){const a=document.createElement('a');a.href='https://wa.me/'+tel;a.target='_blank';a.rel='noopener';a.textContent='Escribir al cliente';act.appendChild(a);}
+    const del=document.createElement('button');del.type='button';del.textContent='Eliminar';del.onclick=()=>{if(del.dataset.s){orders=orders.filter(x=>x.id!==o.id);save();render();}else{del.dataset.s=1;del.textContent='Confirmar eliminar';setTimeout(()=>{delete del.dataset.s;del.textContent='Eliminar';},3000);}};
+    act.appendChild(del);card.appendChild(act);
+    const ta=document.createElement('textarea');ta.className='notes';ta.placeholder='Notas internas (cambios, enlace entregado, pagos…)';ta.value=o.notes||'';ta.setAttribute('aria-label','Notas');
+    ta.onblur=()=>{if(ta.value!==(o.notes||''))upd(o.id,{notes:ta.value},true);};
+    card.appendChild(ta);L.appendChild(card);
+  });
+}
+
+$('add').onclick=add;
+$('q').oninput=render;
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(!b)return;filter=b.dataset.f;[...$('tabs').children].forEach(x=>x.setAttribute('aria-pressed',x===b));render();};
+
+$('exp').onclick=()=>{
+  const blob=new Blob([JSON.stringify(orders,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='pedidos-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();
+};
+$('imp').onchange=e=>{
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const arr=JSON.parse(r.result);let n=0;
+    arr.forEach(o=>{if(o&&o.id&&Array.isArray(o.f)&&!orders.some(x=>x.id===o.id)){orders.push(o);n++;}});
+    orders.sort((a,b)=>b.created-a.created);save();render();$('bmsg').textContent='Se importaron '+n+' pedidos.';
+  }catch(err){$('bmsg').textContent='El archivo no es una copia válida.';}};
+  r.readAsText(file);e.target.value='';
+};
+load();render();
+</script>
+</body>
+</html>
