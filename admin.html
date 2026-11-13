@@ -49,11 +49,44 @@ dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
 .empty,.msg{color:var(--muted);text-align:center;padding:30px 10px}
 .err{color:#C0392B;font-size:.92rem;margin-top:8px}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .err{color:#FF8A78}}
+
+/* BLACKSTORM — panel administrativo */
+:root{--bg:#050505;--surface:#101010;--ink:#f7f7f7;--muted:#a5a5a5;--line:#343434;--brand:#fff;--brand-ink:#050505;--pop:#fff;--ok:#ddd;--warn:#aaa}
+html{background:#050505}
+body{background:radial-gradient(ellipse at 50% -15%,#252525 0%,#090909 42%,#030303 100%);color:#f7f7f7;position:relative;isolation:isolate}
+body:before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;opacity:.12;background:linear-gradient(112deg,transparent 47%,rgba(255,255,255,.95) 48%,rgba(255,255,255,.18) 48.35%,transparent 49%);clip-path:polygon(49% 0,53% 0,50% 19%,58% 31%,51% 39%,56% 52%,46% 68%,51% 78%,43% 100%,40% 100%,47% 78%,41% 68%,49% 51%,45% 39%,52% 31%);filter:drop-shadow(0 0 18px #fff);animation:stormFlash 8s infinite steps(1,end)}
+@keyframes stormFlash{0%,7%,9%,47%,49%,100%{opacity:.025}8%,48%{opacity:.28}8.15%,48.15%{opacity:.06}}
+.wrap{max-width:1160px;padding-top:42px}
+h1{font-size:clamp(2.2rem,6vw,4rem);text-transform:uppercase;letter-spacing:-.055em;text-shadow:0 0 25px rgba(255,255,255,.16)}
+h1:before{content:"BLACKSTORM / ";display:block;font:800 .68rem Figtree,sans-serif;letter-spacing:.28em;color:#aaa;margin-bottom:14px}
+h2,h3{color:#fff}
+.stats{gap:12px}
+.stat,.box,.card{background:linear-gradient(145deg,rgba(24,24,24,.96),rgba(8,8,8,.96));border:1px solid #414141;border-radius:4px;box-shadow:0 12px 35px rgba(0,0,0,.28)}
+.stat{min-width:135px;padding:15px 18px}
+.stat b{font-size:2rem;color:#fff}
+.stat span,.hint,dt{color:#999}
+.box{padding:22px}
+textarea,input[type=search],select{background:#080808;color:#fff;border:1px solid #444;border-radius:3px}
+button{background:#101010;color:#eee;border:1px solid #555;border-radius:3px;text-transform:uppercase;letter-spacing:.06em;transition:.2s}
+button:hover{border-color:#fff;box-shadow:0 0 18px rgba(255,255,255,.12)}
+button.p{background:#fff;color:#050505;border-color:#fff}
+.tabs button[aria-pressed=true]{background:#fff;color:#050505;border-color:#fff}
+.card{border-left-width:3px}
+.card.Nuevo,.card.Proceso,.card.Entregado{border-left-color:#ddd}
+.card h3{font-size:1.25rem}
+.act a{color:#fff}
+.act select{width:auto}
+.notes{background:#080808}
+.empty,.msg{color:#999}
+.err{color:#fff}
+:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){body:before{animation:none;opacity:.05}}
+
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>Panel de pedidos</h1>
+<h1>Panel de pedidos</h1><p class="hint">Centro de control · Gestión de solicitudes</p>
 <div class="stats" id="stats"></div>
 
 <section class="box">
@@ -131,7 +164,7 @@ function render(){
   const q=$('q').value.trim().toLowerCase();
   const rows=orders.filter(o=>(filter==='todos'||o.status===filter)&&(!q||JSON.stringify(o.f).toLowerCase().includes(q)));
   const L=$('list');L.innerHTML='';
-  if(!rows.length){const d=document.createElement('div');d.className='empty';d.textContent=orders.length?'No hay pedidos con ese filtro.':'Aún no hay pedidos. Pega el primero arriba.';L.appendChild(d);return;}
+  if(!rows.length){const d=document.createElement('div');d.className='empty';d.textContent=orders.length?'No hay pedidos con ese filtro.':'Aún no hay pedidos. Las nuevas solicitudes aparecerán aquí automáticamente.';L.appendChild(d);return;}
   rows.forEach(o=>{
     const card=document.createElement('article');card.className='card '+o.status;
     const top=document.createElement('div');top.className='top';

@@ -63,13 +63,59 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .done.show{display:block}
 footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:.92rem}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* BLACKSTORM — identidad visual monocromática */
+:root{--bg:#050505;--surface:#101010;--ink:#f7f7f7;--muted:#a5a5a5;--line:#343434;--brand:#fff;--brand-ink:#050505;--pop:#fff;--ok:#e7e7e7}
+html{background:#050505}
+body{background:radial-gradient(ellipse at 50% -15%,#252525 0%,#090909 42%,#030303 100%);color:#f7f7f7;position:relative;isolation:isolate}
+body:before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;opacity:.14;
+ background:linear-gradient(112deg,transparent 47%,rgba(255,255,255,.95) 48%,rgba(255,255,255,.18) 48.35%,transparent 49%),
+ linear-gradient(72deg,transparent 60%,rgba(255,255,255,.75) 60.2%,rgba(255,255,255,.12) 60.45%,transparent 60.8%);
+ clip-path:polygon(49% 0,53% 0,50% 19%,58% 31%,51% 39%,56% 52%,46% 68%,51% 78%,43% 100%,40% 100%,47% 78%,41% 68%,49% 51%,45% 39%,52% 31%);
+ filter:drop-shadow(0 0 18px #fff);animation:stormFlash 8s infinite steps(1,end)}
+body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.08),transparent 55%),linear-gradient(transparent 96%,rgba(255,255,255,.025) 100%);background-size:auto,100% 5px}
+@keyframes stormFlash{0%,7%,9%,47%,49%,100%{opacity:.035}8%,48%{opacity:.32}8.15%,48.15%{opacity:.08}}
+h1,h2,h3,legend{color:#fff}
+.wrap{max-width:1160px}
+header.hero{padding:76px 0 48px;position:relative}
+.hero h1{font-size:clamp(2.8rem,8vw,6rem);max-width:12ch;letter-spacing:-.065em;text-transform:uppercase;text-shadow:0 0 28px rgba(255,255,255,.18)}
+.hero p{color:#bdbdbd;max-width:55ch}
+.hero .eyebrow,.eyebrow{display:inline-flex;align-items:center;gap:10px;color:#cfcfcf;font-size:.72rem;font-weight:800;letter-spacing:.28em;text-transform:uppercase;margin-bottom:20px}
+.eyebrow:before{content:"";width:26px;height:1px;background:#fff;box-shadow:0 0 10px #fff}
+.steps li{background:rgba(255,255,255,.035);border:1px solid #383838;color:#ddd;border-radius:3px;text-transform:uppercase;letter-spacing:.07em;font-size:.72rem}
+.layout{gap:24px}
+fieldset{padding:24px;border:1px solid #303030;background:rgba(12,12,12,.88);margin-bottom:20px;position:relative}
+legend{padding:0 12px;text-transform:uppercase;letter-spacing:.06em;font-size:1.12rem}
+.hint,.note{color:#999}
+.choices{grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px}
+.choice span{background:#111;border:1px solid #383838;border-radius:3px;color:#eee;min-height:52px;display:flex;flex-direction:column;justify-content:center;transition:.25s}
+.choice span small{color:#999}
+.choice input:checked+span{background:#f5f5f5;color:#050505;border-color:#fff;box-shadow:0 0 22px rgba(255,255,255,.16)}
+.choice input:checked+span small{color:#333}
+input[type=text],input[type=tel],input[type=date],input[type=time],select,textarea{background:#090909;color:#fff;border:1px solid #414141;border-radius:3px}
+input::placeholder,textarea::placeholder{color:#777}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.ticket{background:linear-gradient(145deg,rgba(25,25,25,.97),rgba(7,7,7,.97));border:1px solid #555;border-radius:4px;box-shadow:0 18px 60px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.08)}
+.ticket h2{text-transform:uppercase;letter-spacing:.05em}
+.ticket dl{border-color:#444}
+.ticket .it{border-color:#333}
+.ticket dt{color:#999}
+.btn{background:#fff;color:#050505;border-radius:3px;text-transform:uppercase;letter-spacing:.1em;font-size:.82rem;box-shadow:0 0 24px rgba(255,255,255,.12);transition:transform .2s,box-shadow .2s}
+.btn:hover{filter:none;transform:translateY(-2px);box-shadow:0 0 30px rgba(255,255,255,.25)}
+.btn.alt{background:transparent;color:#fff;border:1px solid #555;box-shadow:none}
+.done{background:#151515;color:#fff;border:1px solid #aaa;border-radius:3px}
+footer{border-color:#292929;color:#888}
+@media(max-width:600px){header.hero{padding:52px 0 30px}fieldset{padding:18px 14px}.hero h1{font-size:clamp(2.5rem,14vw,4rem)}}
+@media(prefers-reduced-motion:reduce){body:before{animation:none;opacity:.06}}
+
 </style>
 </head>
 <body>
 <header class="hero"><div class="wrap">
-  <h1>Cuéntame cómo quieres tu invitación</h1>
-  <p>Llena el formulario con los detalles de tu evento. Yo diseño tu invitación digital y te la envío lista para compartir por WhatsApp.</p>
-  <ul class="steps"><li>1. Llenas tu pedido</li><li>2. Lo envías por WhatsApp</li><li>3. Recibes tu invitación en 24 a 48 horas</li></ul>
+  <div class="eyebrow">BLACKSTORM · DIGITAL EXPERIENCE</div>
+  <h1>Diseñamos momentos que dejan huella</h1>
+  <p>Personaliza tu invitación digital. Completa los detalles de tu evento y registra tu solicitud en unos segundos.</p>
+  <ul class="steps"><li>01 · Personaliza</li><li>02 · Confirma tu solicitud</li><li>03 · Comenzamos tu diseño</li></ul>
 </div></header>
 
 <main class="wrap layout">
@@ -102,7 +148,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);f
 
   <fieldset>
     <legend>Paquete</legend>
-    <p class="hint">Te confirmo el precio por WhatsApp.</p>
+    <p class="hint">Selecciona la experiencia que mejor se adapta a tu evento.</p>
     <div class="choices" id="paquete">
       <label class="choice"><input type="radio" name="paquete" value="Básico"><span>Básico<small>Datos, ubicación y botón de WhatsApp</small></span></label>
       <label class="choice"><input type="radio" name="paquete" value="Estándar"><span>Estándar<small>Suma cuenta regresiva, galería, música y confirmación</small></span></label>
@@ -151,14 +197,14 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);f
   <h2>Resumen de tu pedido</h2>
   <p class="sub">Se actualiza mientras llenas el formulario.</p>
   <dl id="sum"></dl>
-  <a class="btn" id="send" href="#" target="_blank" rel="noopener">Enviar pedido por WhatsApp</a>
-  <button class="btn alt" id="copy" type="button">Copiar pedido</button>
+  <button class="btn" id="send" type="button">Confirmar pedido</button>
+  <button class="btn alt" id="copy" type="button">Copiar resumen</button>
   <div class="done" id="done" role="status"></div>
-  <p class="note">Al enviar, se abre WhatsApp con tu pedido ya escrito. Solo tienes que presionar enviar.</p>
+  <p class="note">Tu solicitud quedará registrada en nuestro sistema y aparecerá en el panel de administración.</p>
 </aside>
 </main>
 
-<footer><div class="wrap">Invitaciones digitales personalizadas. Pago del 50 % para empezar y el resto al aprobar el diseño.</div></footer>
+<footer><div class="wrap">BLACKSTORM · Invitaciones digitales personalizadas.</div></footer>
 
 <script>
 // Cambia este número por el tuyo: código de país + número, sin + ni espacios (ej: 573001234567)
@@ -199,7 +245,7 @@ function render(){
     if(v){dd.textContent=v;}else{dd.textContent='Pendiente';dd.className='empty';}
     d.append(dt,dd);sum.appendChild(d);
   });
-  send.href='https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(message());
+
 }
 function validate(){
   const checks=[
@@ -226,7 +272,7 @@ f.addEventListener('change',render);
 const ORDERS_KEY = 'pedidos_v1';
 function saveOrderLocally(){
   const fields = data().filter(([k,v])=>v);
-  const messageText = message().replace(/\\s+/g,' ').trim();
+  const messageText = message().replace(/\s+/g,' ').trim();
   const sourceHash = messageText.toLowerCase();
   let orders = [];
   try { orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]'); } catch (err) { orders = []; }
@@ -255,24 +301,23 @@ function saveOrderLocally(){
 }
 
 send.addEventListener('click',e=>{
-  if(!validate()){e.preventDefault();return;}
+  if(!validate())return;
   render();
   const result = saveOrderLocally();
   if(result === 'saved'){
-    done.textContent='¡Pedido registrado! Ahora aparecerá en admin.html como «Nuevo». Se abrirá WhatsApp para que también envíes el mensaje.';
+    done.textContent='¡Solicitud registrada correctamente! Ya aparece en el panel de administración con estado «Nuevo».';
   } else if(result === 'duplicate'){
-    done.textContent='Este pedido ya estaba registrado en este navegador. Se abrirá WhatsApp para que puedas enviarlo.';
+    done.textContent='Esta solicitud ya estaba registrada en este navegador.';
   } else {
-    e.preventDefault();
-    done.textContent='No se pudo guardar el pedido en este navegador. Revisa el almacenamiento del navegador e inténtalo de nuevo.';
+    done.textContent='No se pudo guardar la solicitud en este navegador. Revisa el almacenamiento e inténtalo de nuevo.';
   }
   done.classList.add('show');
 });
 document.getElementById('copy').addEventListener('click',async()=>{
   if(!validate())return;
   const txt=message().replace(/\*/g,'');
-  try{await navigator.clipboard.writeText(txt);done.textContent='Pedido copiado. Pégalo en un chat de WhatsApp conmigo.';}
-  catch(err){done.textContent='No se pudo copiar automáticamente. Selecciona el resumen y cópialo a mano.';}
+  try{await navigator.clipboard.writeText(txt);done.textContent='Resumen copiado.';}
+  catch(err){done.textContent='No se pudo copiar automáticamente. Inténtalo de nuevo.';}
   done.classList.add('show');
 });
 render();
