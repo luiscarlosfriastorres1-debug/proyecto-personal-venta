@@ -83,8 +83,22 @@ button.p{background:#fff;color:#050505;border-color:#fff}
 @media(prefers-reduced-motion:reduce){body:before{animation:none;opacity:.05}}
 
 </style>
+<style>
+
+/* BLACKSTORM: relámpagos globales */
+html { background:#050505; }
+body { isolation:isolate; background:#050505 !important; color:#f5f5f5; }
+#storm-layer {
+  position:fixed; inset:0; width:100%; height:100%;
+  z-index:0; pointer-events:none; opacity:.96;
+  mix-blend-mode:screen;
+}
+body > *:not(#storm-layer) { position:relative; z-index:1; }
+
+</style>
 </head>
 <body>
+<canvas id="storm-layer" aria-hidden="true"></canvas>
 <div class="wrap">
 <h1>Panel de pedidos</h1><p class="hint">Centro de control · Gestión de solicitudes</p>
 <div class="stats" id="stats"></div>
@@ -213,6 +227,80 @@ window.addEventListener('storage',e=>{
   if(e.key===KEY){load();render();}
 });
 load();render();
+</script>
+<script>
+
+/* Relámpagos frecuentes por toda la pantalla */
+(() => {
+  const canvas = document.getElementById('storm-layer');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha:true });
+  let w=0, h=0, dpr=1, timer=null, clearTimer=null;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){
+    dpr=Math.min(window.devicePixelRatio||1,1.5);
+    w=window.innerWidth; h=window.innerHeight;
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(h*dpr);
+    canvas.style.width=w+'px'; canvas.style.height=h+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function bolt(x1,y1,x2,y2,steps=19,width=2,branch=true){
+    const pts=[{x:x1,y:y1}];
+    for(let i=1;i<steps;i++){
+      const t=i/steps;
+      pts.push({
+        x:x1+(x2-x1)*t+(Math.random()-.5)*Math.min(100,w*.12),
+        y:y1+(y2-y1)*t+(Math.random()-.5)*Math.min(48,h*.035)
+      });
+    }
+    pts.push({x:x2,y:y2});
+    ctx.beginPath(); ctx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i].x,pts[i].y);
+    ctx.strokeStyle='rgba(255,255,255,.98)';
+    ctx.lineWidth=width; ctx.shadowColor='#fff'; ctx.shadowBlur=25;
+    ctx.stroke();
+    ctx.strokeStyle='rgba(210,230,255,.9)';
+    ctx.lineWidth=Math.max(.7,width*.32); ctx.shadowBlur=9; ctx.stroke();
+
+    if(branch && steps>8){
+      const count=2+Math.floor(Math.random()*3);
+      for(let b=0;b<count;b++){
+        const at=2+Math.floor(Math.random()*(pts.length-4));
+        const p=pts[at], dir=Math.random()>.5?1:-1;
+        const len=35+Math.random()*Math.min(150,w*.2);
+        bolt(p.x,p.y,p.x+dir*len,p.y+len*(.35+Math.random()*.7),7,Math.max(.65,width*.48),false);
+      }
+    }
+  }
+  function flash(){
+    if(!w||!h) return;
+    ctx.clearRect(0,0,w,h);
+    // Relámpagos repartidos: varios puntos de entrada y distintas inclinaciones.
+    const amount=1+(Math.random()>.28?1:0)+(Math.random()>.72?1:0);
+    for(let i=0;i<amount;i++){
+      const x=Math.random()*w;
+      const slant=(Math.random()-.5)*w*.48;
+      const startY=-20+Math.random()*h*.16;
+      const endX=Math.max(-30,Math.min(w+30,x+slant));
+      bolt(x,startY,endX,h*(.58+Math.random()*.48),18+Math.floor(Math.random()*9),1.5+Math.random()*2.2,true);
+    }
+    // Destello ambiental breve para iluminar el fondo completo.
+    if(Math.random()>.38){
+      ctx.fillStyle='rgba(235,242,255,'+(0.035+Math.random()*.055)+')';
+      ctx.fillRect(0,0,w,h);
+    }
+    clearTimeout(clearTimer);
+    clearTimer=setTimeout(()=>ctx.clearRect(0,0,w,h),85+Math.random()*85);
+    clearTimeout(timer);
+    timer=setTimeout(flash, reduced ? 1500 : 230+Math.random()*310);
+  }
+  resize();
+  window.addEventListener('resize',resize,{passive:true});
+  // Primer destello inmediato; después continúan en ráfagas frecuentes.
+  flash();
+})();
+
 </script>
 </body>
 </html>
